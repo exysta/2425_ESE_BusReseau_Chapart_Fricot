@@ -126,7 +126,7 @@ int main(void)
 	HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &value, 1, 1000);
 	//--------------------------------------------------------------------------------------------
 
-	// Récupération de l'étalonnage, de la température et de la pression
+	// Récupération de l'étalonnage
 	uint8_t calibration_buffer[CALIBRATION_BUFFER_SIZE];
 	uint8_t first_calibration_addr = 0x88;
 	uint8_t current_calibration_addr = first_calibration_addr; // variable qu'on va incrementer pour récup toutes les adresses
@@ -139,6 +139,15 @@ int main(void)
 		calibration_buffer[i] = calibration_value; // on la range dans le buffer
 		current_calibration_addr++; // on incrémente l'adresse
 	}
+	//----------------------------------------------------------------------------------------------------------
+
+	// Récupération de la température
+
+
+
+	//----------------------------------------------------------------------------------------------------------
+
+	// Récupération de la pression
 
 
 	/* USER CODE END 2 */
