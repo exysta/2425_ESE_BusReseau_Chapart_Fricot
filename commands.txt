@@ -1,0 +1,12 @@
+sudo adduser exysta
+susudo usermod -aG sudo exysta
+sudo usermod -aG dialout exysta
+newgrp sudo
+newgrp dialout
+
+sudo apt update
+sudo apt install python3-pip
+pip3 install pyserial
+pip install flask
+
+FLASK_APP=hello.py flask run
