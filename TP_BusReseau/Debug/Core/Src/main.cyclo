@@ -1,4 +1,8 @@
-../Core/Src/main.c:63:10:convertBufferToUint32	1
-../Core/Src/main.c:72:5:main	4
-../Core/Src/main.c:193:6:SystemClock_Config	3
-../Core/Src/main.c:244:6:Error_Handler	1
+../Core/Src/main.c:73:10:convertBufferToUint32	1
+../Core/Src/main.c:77:5:GET_T	2
+../Core/Src/main.c:100:5:__io_put_char	1
+../Core/Src/main.c:109:6:task_shell	1
+../Core/Src/main.c:125:5:main	1
+../Core/Src/main.c:254:6:SystemClock_Config	3
+../Core/Src/main.c:309:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/main.c:326:6:Error_Handler	1
