@@ -99,8 +99,8 @@ int GET_T(h_shell_t * h_shell,int argc, char ** argv)
 
 int __io_put_char(int chr)
 {
-	HAL_UART_Transmit(&huart1, (uint8_t*) &chr, 1, HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2, (uint8_t*) &chr, 1, HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart3, (uint8_t*) &chr, 1, HAL_MAX_DELAY);
 
 	return chr;
 }
@@ -150,7 +150,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_CAN1_Init();
   MX_I2C1_Init();
-  MX_USART1_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   BaseType_t ret;
   ret = xTaskCreate(task_shell, "shell", TASK_SHELL_STACK_DEPTH, NULL, TASK_SHELL_PRIORITY, &h_shell_handle);

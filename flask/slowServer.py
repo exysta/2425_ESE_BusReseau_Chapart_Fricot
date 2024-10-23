@@ -3,10 +3,6 @@ import json
 
 app = Flask(__name__)
 
-users = [
-    {"id": 1, "name": "lulu"},
-    {"id": 2, "name": "chacha"},
-]
 
 @app.route('/')
 def hello_world():
@@ -65,9 +61,6 @@ def api_welcome_index(index):
     #message = {"index": index, "val": welcome[index]}
     #return jsonify({'message': message})
 
-# Helper function to find a user by ID
-def find_user(user_id):
-    return next((user for user in users if user["id"] == user_id), None)
 
 
 @app.errorhandler(404)

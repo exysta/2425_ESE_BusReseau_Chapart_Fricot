@@ -12,7 +12,9 @@
 
 #include <stdint.h>
 
-#define UART_DEVICE huart2
+#define UART_DEVICE_PC huart2
+#define UART_DEVICE_PI huart3
+
 
 #define ARGC_MAX 8
 #define BUFFER_SIZE 40

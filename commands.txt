@@ -1,5 +1,5 @@
 sudo adduser exysta
-susudo usermod -aG sudo exysta
+sudo usermod -aG sudo exysta
 sudo usermod -aG dialout exysta
 newgrp sudo
 newgrp dialout

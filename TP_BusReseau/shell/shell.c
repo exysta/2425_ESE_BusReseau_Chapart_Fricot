@@ -15,13 +15,15 @@
 static char uart_read() {
 	char c;
 
-	HAL_UART_Receive(&UART_DEVICE, (uint8_t*)(&c), 1, HAL_MAX_DELAY);
+	HAL_UART_Receive(&UART_DEVICE_PI, (uint8_t*)(&c), 1, HAL_MAX_DELAY);
 
 	return c;
 }
 
 static int uart_write(char * s, uint16_t size) {
-	HAL_UART_Transmit(&UART_DEVICE, (uint8_t*)s, size, HAL_MAX_DELAY);
+	HAL_UART_Transmit(&UART_DEVICE_PC, (uint8_t*)s, size, HAL_MAX_DELAY);
+	HAL_UART_Transmit(&UART_DEVICE_PI, (uint8_t*)s, size, HAL_MAX_DELAY);
+
 	return size;
 }
 
