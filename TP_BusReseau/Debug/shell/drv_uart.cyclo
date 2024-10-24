@@ -1,0 +1,6 @@
+../shell/drv_uart.c:34:9:drv_uart_receive	1
+../shell/drv_uart.c:47:9:drv_uart_transmit	1
+../shell/drv_uart.c:61:6:HAL_UART_RxCpltCallback	5
+../shell/drv_uart.c:80:6:HAL_UART_TxCpltCallback	5
+../shell/drv_uart.c:99:9:drv_uart_waitReceiveComplete	1
+../shell/drv_uart.c:107:9:drv_uart_waitTransmitComplete	1

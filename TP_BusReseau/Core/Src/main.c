@@ -42,8 +42,7 @@
 #define BMP280_ADDR 0x77
 #define MPU9250_ADDR 0x68
 #define BMP280_CALIBRATION_BUFFER_SIZE 25
-#define TASK_SHELL_STACK_DEPTH 256
-#define TASK_SHELL_PRIORITY 1
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -54,8 +53,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-h_shell_t h_shell;
-xTaskHandle h_shell_handle;
 uint8_t GET_T_FLAG = 0;
 uint16_t bmp280_addr_shifted =  BMP280_ADDR << 1; // adresse du composant contenant l'ID, qu'on décale de 1 bit (voir énoncé)
 
@@ -70,6 +67,15 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+int __io_put_char(int chr)
+{
+	HAL_UART_Transmit(&huart2, (uint8_t*) &chr, 1, HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart3, (uint8_t*) &chr, 1, HAL_MAX_DELAY);
+
+	return chr;
+}
+
 uint32_t convertBufferToUint32(uint8_t buffer[3]) {
     return (uint32_t)buffer[0] << 16 | (uint32_t)buffer[1] << 8 | (uint32_t)buffer[2];
 }
@@ -93,29 +99,34 @@ int GET_T(h_shell_t * h_shell,int argc, char ** argv)
 	uint32_t temp_value_32  =	convertBufferToUint32(temp_value_buffer);
 
 
-	printf("température non compensée %d \r\n",temp_value_32);
+	printf("température non compensée %lu \r\n",temp_value_32);
 	return 0;
 }
 
-int __io_put_char(int chr)
+int GET_P(h_shell_t * h_shell,int argc, char ** argv)
 {
-	HAL_UART_Transmit(&huart2, (uint8_t*) &chr, 1, HAL_MAX_DELAY);
-	HAL_UART_Transmit(&huart3, (uint8_t*) &chr, 1, HAL_MAX_DELAY);
+	//récupération de la pression
+	uint8_t pressure_start_addr = 0xF7; // l'adresse de départ du registre pression
+	uint8_t pressure_value_buffer[3]; //chaque adresse sera stocké dans un byte puis on combinera les bytes
+	uint8_t current_pressure_addr = pressure_start_addr;
+	uint8_t pressure_value; //chaque adresse sera stocké dans un byte puis on combinera les bytes
 
-	return chr;
+	for(int i = 0; i <3;i++)
+	{
+
+		HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &current_pressure_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
+		HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &pressure_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
+		pressure_value_buffer[i] = pressure_value; // on la range dans le buffer
+		current_pressure_addr++; // on incrémente l'adresse
+	}
+	//HAL_I2C_Mem_Read(hi2c, DevAddress, MemAddress, MemAddSize, pData, Size, Timeout)
+	uint32_t pressure_value_32 = convertBufferToUint32(pressure_value_buffer);
+
+
+	printf("pression non compensée %lu \r\n",pressure_value_32);
+	return 0;
 }
 
-
-void task_shell(void * unused)
-{
-	shell_init(&h_shell);
-	shell_add(&h_shell,'t', GET_T, "Une fonction qui lit la température youppii !!");
-	shell_run(&h_shell);
-	// shell_run() infinie donc la task ne se finie jamais
-	//rappel : une tache ne doit jamais retourner
-	// si on arrete une tache, il faut appeler vTaskDelete(0);
-
-}
 /* USER CODE END 0 */
 
 /**
@@ -152,8 +163,6 @@ int main(void)
   MX_I2C1_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  BaseType_t ret;
-  ret = xTaskCreate(task_shell, "shell", TASK_SHELL_STACK_DEPTH, NULL, TASK_SHELL_PRIORITY, &h_shell_handle);
 #ifdef TP1
 
 	// on récupère ID
@@ -224,6 +233,12 @@ int main(void)
 	uint32_t temp_value_32  =	convertBufferToUint32(temp_value_buffer);
 #endif
 
+	shell_init(&h_shell);
+	shell_add(&h_shell,"GET_T",GET_T,"get temperature from the bmp280 sensor");
+	shell_add(&h_shell,"GET_P",GET_P,"get pressure from the bmp280 sensor");
+
+	BaseType_t ret;
+	ret = shell_createShellTask();
 	//--------------------------------------------------------------------------------------
   /* USER CODE END 2 */
 
