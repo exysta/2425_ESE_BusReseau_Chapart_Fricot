@@ -85,7 +85,7 @@ int bmp280_config()
 	HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &value, 1, 1000);
 }
 
-int GET_T(int argc, char ** argv)
+int GET_T()
 {
 	//récupération de la température
 	uint8_t temp_start_addr = 0xFA; // l'adresse de départ du registre température
@@ -102,10 +102,38 @@ int GET_T(int argc, char ** argv)
 		current_temp_addr++; // on incrémente l'adresse
 	}
 	uint32_t temp_value_32  =	convertBufferToUint32(temp_value_buffer);
+    float temp_value_c = temp_value_32 * 0.0025f;
+    uint32_t temp_value_c_scaled = (int)(temp_value_c * 100); //1234 = 12.34 degrés celsius
 
-
-	printf("température non compensée %d \r\n",temp_value_32);
+    printf("Temperature (à divisé par 100 ): %d \r\n", temp_value_c_scaled);
 	return 0;
+}
+
+int GET_P()
+{
+	//récupération de la pression
+	uint8_t pressure_start_addr = 0xF7; // l'adresse de départ du registre pression
+	uint8_t pressure_value_buffer[3]; //chaque adresse sera stocké dans un byte puis on combinera les bytes
+	uint8_t current_pressure_addr = pressure_start_addr;
+	uint8_t pressure_value; //chaque adresse sera stocké dans un byte puis on combinera les bytes
+
+	for(int i = 0; i <3;i++)
+	{
+
+		HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &current_pressure_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
+		HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &pressure_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
+		pressure_value_buffer[i] = pressure_value; // on la range dans le buffer
+		current_pressure_addr++; // on incrémente l'adresse
+	}
+	//HAL_I2C_Mem_Read(hi2c, DevAddress, MemAddress, MemAddSize, pData, Size, Timeout)
+	uint32_t pressure_value_32 = convertBufferToUint32(pressure_value_buffer);
+	printf("pression non compensée %d \r\n",pressure_value);
+
+}
+
+int GET_K()
+{
+
 }
 
 int __io_put_char(int chr)
@@ -214,7 +242,9 @@ int main(void)
 	uint32_t temp_value_32  =	convertBufferToUint32(temp_value_buffer);
 #endif
 
-	uint8_t receive_buffer[1];
+	uint8_t uart_transmission_end_flag = 0;
+	uint8_t received_char;
+	uint8_t receive_buffer[10];
 
 	//--------------------------------------------------------------------------------------
 	/* USER CODE END 2 */
@@ -223,8 +253,27 @@ int main(void)
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		HAL_UART_Receive(&huart3, receive_buffer, 1, HAL_MAX_DELAY);// pour raspberry
-		//HAL_UART_Receive(&huart2, receive_buffer, 1, HAL_MAX_DELAY);// pour PC
+		int buffer_index = 0;
+		while(uart_transmission_end_flag == 0)
+		{
+			HAL_UART_Receive(&huart3, &received_char, 1, HAL_MAX_DELAY);// pour raspberry
+			if(received_char != '\r' || received_char != '\n' )
+			{
+				receive_buffer[buffer_index] == received_char;
+			}
+			else
+			{
+				if(strcmp(receive_buffer,"GET_T"))
+				{
+					GET_T();
+				}
+				if(strcmp(receive_buffer,"GET_P"))
+				{
+					GET_P();
+				}
+			    memset(buffer, 0, sizeof(buffer));
+			}
+		}
 
 		/* USER CODE END WHILE */
 
