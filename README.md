@@ -176,7 +176,7 @@ Grâce à ce nmap, nous pouvons identifier les raspberry disponibles sur le rés
 On branche le port série du Raspberry en boucle : RX sur TX. On utilise ensuite le logiciel minicom sur la Raspberry pour tester le port série.
 
 <div align="center">
-    <img src="./Images/loopback_minicom.png" width="400">
+    <img src="./Images/loopback_minicom.png" width="300">
 </div>
 
 Lorsque l’on écrit quelques lettres au clavier, elles s’affichent bien, cela montre que le loopback fonctionne.
