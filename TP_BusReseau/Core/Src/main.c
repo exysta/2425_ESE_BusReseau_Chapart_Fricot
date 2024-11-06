@@ -24,6 +24,7 @@
 #include "usart.h"
 #include "gpio.h"
 
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "shell.h"
@@ -96,6 +97,8 @@ int GET_T(h_shell_t * h_shell,int argc, char ** argv)
 	printf("température non compensée %d \r\n",temp_value_32);
 	return 0;
 }
+
+// Modification du printf pour qu'elle écrive sur les deux UARTs à la fois
 
 int __io_put_char(int chr)
 {
