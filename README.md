@@ -1,22 +1,6 @@
 # 2425_ESE_BusReseau_Chapart_Fricot
 
-## Table des matières
-
-1. [TP 1 - Bus I²C](#tp-1---bus-i2c)
-   - [Capteur BMP280](#capteur-bmp280)
-   - [Setup du STM32](#setup-du-stm32)
-   - [Communication I²C](#communication-i2c)
-2. [TP2 - Interfaçage STM32 - Raspberry](#tp2---interfaçage-stm32---raspberry)
-   - [Mise en route du Raspberry Pi Zéro](#mise-en-route-du-raspberry-pi-zéro)
-   - [Port Série](#port-série)
-3. [TP3 - Interface REST](#tp3---interface-rest)
-   - [Installation du Serveur Python](#installation-du-serveur-python)
-  
-Bien sûr ! Voici la version sans soulignement.
-
 # TP Bus et Réseaux Industriels
-
-Ce dépôt contient la documentation et le code source pour les travaux pratiques sur les bus et réseaux industriels, incluant la mise en place de la communication I²C avec un capteur BMP280, le setup du microcontrôleur STM32, et la création d'une interface REST pour l'interfaçage avec un Raspberry Pi.
 
 ## Table des matières
 
