@@ -1,7 +1,10 @@
-../Core/Src/main.c:67:10:convertBufferToUint32	1
-../Core/Src/main.c:71:5:GET_T	2
-../Core/Src/main.c:94:5:__io_put_char	1
-../Core/Src/main.c:110:5:main	4
-../Core/Src/main.c:228:6:SystemClock_Config	3
-../Core/Src/main.c:283:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/main.c:300:6:Error_Handler	1
+../Core/Src/main.c:70:10:convertBufferToUint32	1
+../Core/Src/main.c:74:5:bmp280_config	1
+../Core/Src/main.c:89:5:GET_T	2
+../Core/Src/main.c:113:5:GET_P	2
+../Core/Src/main.c:135:5:GET_K	1
+../Core/Src/main.c:141:6:CAN_Send_AutomaticMode	3
+../Core/Src/main.c:171:5:__io_put_char	1
+../Core/Src/main.c:187:5:main	1
+../Core/Src/main.c:304:6:SystemClock_Config	4
+../Core/Src/main.c:361:6:Error_Handler	1

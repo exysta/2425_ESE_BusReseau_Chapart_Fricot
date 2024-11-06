@@ -42,6 +42,7 @@
 #define BMP280_ADDR 0x77
 #define MPU9250_ADDR 0x68
 #define BMP280_CALIBRATION_BUFFER_SIZE 25
+#define CAN
 
 /* USER CODE END PD */
 
@@ -79,10 +80,10 @@ int bmp280_config()
 	uint8_t bmp280_ctrl_meas_buffer[2] = {bmp280_addr_ctrl_meas, bmp280_config_ctrl_meas};
 	uint8_t value = 0;
 	//on envoie la config
-	HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, bmp280_ctrl_meas_buffer, 2, 1000); //on envoie buffer avec adresse du registre
+	HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, bmp280_ctrl_meas_buffer, 2, 1000); //on envoie buffer avec adresse du registre
 	//puis valeur à y écrire
 	//pour vérification
-	HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &value, 1, 1000);
+	HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &value, 1, 1000);
 }
 
 int GET_T()
@@ -96,16 +97,16 @@ int GET_T()
 	for(int i = 0; i <3;i++)
 	{
 
-		HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &current_temp_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
-		HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &temp_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
+		HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, &current_temp_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
+		HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &temp_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
 		temp_value_buffer[i] = temp_value; // on la range dans le buffer
 		current_temp_addr++; // on incrémente l'adresse
 	}
 	uint32_t temp_value_32  =	convertBufferToUint32(temp_value_buffer);
-    float temp_value_c = temp_value_32 * 0.0025f;
-    uint32_t temp_value_c_scaled = (int)(temp_value_c * 100); //1234 = 12.34 degrés celsius
+	float temp_value_c = temp_value_32 * 0.0025f;
+	uint32_t temp_value_c_scaled = (int)(temp_value_c * 100); //1234 = 12.34 degrés celsius
 
-    printf("Temperature (à divisé par 100 ): %d \r\n", temp_value_c_scaled);
+	printf("Temperature (à divisé par 100 ): %d \r\n", temp_value_c_scaled);
 	return 0;
 }
 
@@ -120,8 +121,8 @@ int GET_P()
 	for(int i = 0; i <3;i++)
 	{
 
-		HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &current_pressure_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
-		HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &pressure_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
+		HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, &current_pressure_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
+		HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &pressure_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
 		pressure_value_buffer[i] = pressure_value; // on la range dans le buffer
 		current_pressure_addr++; // on incrémente l'adresse
 	}
@@ -135,6 +136,37 @@ int GET_K()
 {
 
 }
+#ifdef CAN
+
+void CAN_Send_AutomaticMode(uint8_t angle, uint8_t sign) {
+    CAN_TxHeaderTypeDef txHeader;
+    uint8_t data[2];         // Data array for angle and sign
+    uint32_t txMailbox;
+
+    // Limit the angle to 180 degrees max
+    if (angle > 180) angle = 180;
+
+    // Frame configuration for Automatic Mode
+    txHeader.StdId = 0x61;           // ID for Automatic Mode angle setting
+    txHeader.ExtId = 0x1ABCDE;       // Not used here
+    txHeader.IDE = CAN_ID_STD;       // Standard CAN ID
+    txHeader.RTR = CAN_RTR_DATA;     // Data frame
+    txHeader.DLC = 2;                // 2 bytes: D0 (angle), D1 (sign)
+    txHeader.TransmitGlobalTime = DISABLE;
+
+    // Data configuration
+    data[0] = angle;                 // D0: Desired angle (0 to 180)
+    data[1] = sign;                  // D1: Angle sign (0x00 for positive, 0x01 for negative)
+
+    // Send the frame
+    if (HAL_CAN_AddTxMessage(&hcan1, &txHeader, data, &txMailbox) != HAL_OK) {
+        // Error handling
+        Error_Handler();
+    }
+}
+
+
+#endif
 
 int __io_put_char(int chr)
 {
@@ -149,46 +181,46 @@ int __io_put_char(int chr)
 /* USER CODE END 0 */
 
 /**
- * @brief  The application entry point.
- * @retval int
- */
+  * @brief  The application entry point.
+  * @retval int
+  */
 int main(void)
 {
 
-	/* USER CODE BEGIN 1 */
+  /* USER CODE BEGIN 1 */
 
-	/* USER CODE END 1 */
+  /* USER CODE END 1 */
 
-	/* MCU Configuration--------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-	/* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-	/* USER CODE END Init */
+  /* USER CODE END Init */
 
-	/* Configure the system clock */
-	SystemClock_Config();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-	/* USER CODE BEGIN SysInit */
+  /* USER CODE BEGIN SysInit */
 
-	/* USER CODE END SysInit */
+  /* USER CODE END SysInit */
 
-	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
-	MX_USART2_UART_Init();
-	MX_CAN1_Init();
-	MX_I2C1_Init();
-	MX_USART3_UART_Init();
-	/* USER CODE BEGIN 2 */
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_USART2_UART_Init();
+  MX_CAN1_Init();
+  MX_USART3_UART_Init();
+  MX_I2C3_Init();
+  /* USER CODE BEGIN 2 */
 
 #ifdef SENSOR_TESt
 	// on récupère ID
 	uint8_t bmp280_id = 0;
 	uint8_t bmp280_addr_id = 0xD0; // l'adresse du registre contenant l'ID
-	HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &bmp280_addr_id, 1, 1000); //on envoie l'adresse du registre qu'on veut récupérer
-	HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &bmp280_id, 1, 1000);
+	HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, &bmp280_addr_id, 1, 1000); //on envoie l'adresse du registre qu'on veut récupérer
+	HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &bmp280_id, 1, 1000);
 	//--------------------------------------------------------------------------------------
 
 
@@ -202,131 +234,120 @@ int main(void)
 	for(int i = 0; i <BMP280_CALIBRATION_BUFFER_SIZE;i++)
 	{
 
-		HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &current_calibration_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
-		HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &calibration_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
+		HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, &current_calibration_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
+		HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &calibration_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
 		calibration_buffer[i] = calibration_value; // on la range dans le buffer
 		current_calibration_addr++; // on incrémente l'adresse
 	}
 
-	//récupération de la pression
-	uint8_t pressure_start_addr = 0xF7; // l'adresse de départ du registre pression
-	uint8_t pressure_value_buffer[3]; //chaque adresse sera stocké dans un byte puis on combinera les bytes
-	uint8_t current_pressure_addr = pressure_start_addr;
-	uint8_t pressure_value; //chaque adresse sera stocké dans un byte puis on combinera les bytes
-
-	for(int i = 0; i <3;i++)
-	{
-
-		HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &current_pressure_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
-		HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &pressure_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
-		pressure_value_buffer[i] = pressure_value; // on la range dans le buffer
-		current_pressure_addr++; // on incrémente l'adresse
-	}
-	//HAL_I2C_Mem_Read(hi2c, DevAddress, MemAddress, MemAddSize, pData, Size, Timeout)
-	uint32_t pressure_value_32 = convertBufferToUint32(pressure_value_buffer);
-	//--------------------------------------------------------------------------------------
-	//récupération de la température
-	uint8_t temp_start_addr = 0xFA; // l'adresse de départ du registre température
-	uint8_t temp_value_buffer[3]; //chaque adresse sera stocké dans un byte puis on combinera les bytes
-	uint8_t current_temp_addr = temp_start_addr;
-	uint8_t temp_value; //chaque adresse sera stocké dans un byte puis on combinera les bytes
-
-	for(int i = 0; i <3;i++)
-	{
-
-		HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &current_temp_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
-		HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &temp_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
-		temp_value_buffer[i] = temp_value; // on la range dans le buffer
-		current_temp_addr++; // on incrémente l'adresse
-	}
-	uint32_t temp_value_32  =	convertBufferToUint32(temp_value_buffer);
 #endif
 
 	uint8_t uart_transmission_end_flag = 0;
 	uint8_t received_char;
 	uint8_t receive_buffer[10];
+	memset(receive_buffer, 0, sizeof(receive_buffer));
 
-	//--------------------------------------------------------------------------------------
-	/* USER CODE END 2 */
 
-	/* Infinite loop */
-	/* USER CODE BEGIN WHILE */
+#ifdef CAN
+
+	HAL_StatusTypeDef ret = HAL_CAN_Start(&hcan1);
+
+#endif
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		int buffer_index = 0;
-		while(uart_transmission_end_flag == 0)
-		{
-			HAL_UART_Receive(&huart3, &received_char, 1, HAL_MAX_DELAY);// pour raspberry
-			if(received_char != '\r' || received_char != '\n' )
-			{
-				receive_buffer[buffer_index] == received_char;
-			}
-			else
-			{
-				if(strcmp(receive_buffer,"GET_T"))
-				{
-					GET_T();
-				}
-				if(strcmp(receive_buffer,"GET_P"))
-				{
-					GET_P();
-				}
-			    memset(buffer, 0, sizeof(buffer));
-			}
-		}
+		CAN_Send_AutomaticMode(0x54,0x01);
+		HAL_Delay(1000);
+		CAN_Send_AutomaticMode(0x54,0x00);
 
-		/* USER CODE END WHILE */
+		HAL_Delay(1000);
+//		printf("start \r\n");
+//		int buffer_index = 0;
+//		uart_transmission_end_flag = 0;
+//
+//		while(uart_transmission_end_flag == 0)
+//		{
+//			HAL_UART_Receive(&huart2, &received_char, 1, HAL_MAX_DELAY);// pour raspberry
+//			if(received_char != '\r' && received_char != '\n' )
+//			{
+//				receive_buffer[buffer_index] == received_char;
+//			}
+//			else
+//			{
+//				if(strcmp(receive_buffer,"GET_T"))
+//				{
+//					GET_T();
+//				}
+//				if(strcmp(receive_buffer,"GET_P"))
+//				{
+//					GET_P();
+//				}
+//				memset(receive_buffer, 0, sizeof(receive_buffer));
+//				uart_transmission_end_flag = 1;
+//			}
+//		}
 
-		/* USER CODE BEGIN 3 */
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
 	}
-	/* USER CODE END 3 */
+  /* USER CODE END 3 */
 }
 
 /**
- * @brief System Clock Configuration
- * @retval None
- */
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
-	RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-	RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-	/** Configure the main internal regulator output voltage
-	 */
-	__HAL_RCC_PWR_CLK_ENABLE();
-	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  /** Configure the main internal regulator output voltage
+  */
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-	/** Initializes the RCC Oscillators according to the specified parameters
-	 * in the RCC_OscInitTypeDef structure.
-	 */
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-	RCC_OscInitStruct.PLL.PLLM = 16;
-	RCC_OscInitStruct.PLL.PLLN = 336;
-	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
-	RCC_OscInitStruct.PLL.PLLQ = 2;
-	RCC_OscInitStruct.PLL.PLLR = 2;
-	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-	{
-		Error_Handler();
-	}
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 180;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLR = 2;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-	/** Initializes the CPU, AHB and APB buses clocks
-	 */
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-			|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  /** Activate the Over-Drive mode
+  */
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-	{
-		Error_Handler();
-	}
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /* USER CODE BEGIN 4 */
@@ -334,54 +355,33 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
- * @brief  Period elapsed callback in non blocking mode
- * @note   This function is called  when TIM6 interrupt took place, inside
- * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
- * a global variable "uwTick" used as application time base.
- * @param  htim : TIM handle
- * @retval None
- */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	/* USER CODE BEGIN Callback 0 */
-
-	/* USER CODE END Callback 0 */
-	if (htim->Instance == TIM6) {
-		HAL_IncTick();
-	}
-	/* USER CODE BEGIN Callback 1 */
-
-	/* USER CODE END Callback 1 */
-}
-
-/**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
- */
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
 void Error_Handler(void)
 {
-	/* USER CODE BEGIN Error_Handler_Debug */
+  /* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
 	__disable_irq();
 	while (1)
 	{
 	}
-	/* USER CODE END Error_Handler_Debug */
+  /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
 /**
- * @brief  Reports the name of the source file and the source line number
- *         where the assert_param error has occurred.
- * @param  file: pointer to the source file name
- * @param  line: assert_param error line source number
- * @retval None
- */
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-	/* USER CODE BEGIN 6 */
+  /* USER CODE BEGIN 6 */
 	/* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-	/* USER CODE END 6 */
+  /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
