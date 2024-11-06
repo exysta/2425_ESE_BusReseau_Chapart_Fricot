@@ -5,12 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../shell/drv_uart.c \
 ../shell/shell.c 
 
 OBJS += \
+./shell/drv_uart.o \
 ./shell/shell.o 
 
 C_DEPS += \
+./shell/drv_uart.d \
 ./shell/shell.d 
 
 
@@ -21,7 +24,7 @@ shell/%.o shell/%.su shell/%.cyclo: ../shell/%.c shell/subdir.mk
 clean: clean-shell
 
 clean-shell:
-	-$(RM) ./shell/shell.cyclo ./shell/shell.d ./shell/shell.o ./shell/shell.su
+	-$(RM) ./shell/drv_uart.cyclo ./shell/drv_uart.d ./shell/drv_uart.o ./shell/drv_uart.su ./shell/shell.cyclo ./shell/shell.d ./shell/shell.o ./shell/shell.su
 
 .PHONY: clean-shell
 
