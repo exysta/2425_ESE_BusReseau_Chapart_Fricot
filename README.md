@@ -262,3 +262,11 @@ Ajouter une description du script python !!!!
 
 
 ## 4. TP4 - Bus CAN
+
+<div align="center">
+    <img src="./Images/calcul_reglage_CAN.png" width="350">
+</div>
+
+<div align="center">
+    <img src="./Images/reglage_CAN.png" width="350">
+</div>
