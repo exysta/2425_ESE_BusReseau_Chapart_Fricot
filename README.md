@@ -44,7 +44,8 @@ Le dernier bit est modifiable par la valeur SDO et peut être modifié en cours 
 
 Les valeurs de pression et de température sont censées être reçues au format 20 bits, positif, stocké dans un entier signé de 32 bits. 
 
-à repondre !!!!
+Pour compenser la pression on utilise la fonction bmp280_compensate_P_int64 et pour la température bmp280_compensate_T_int32. Ces fonctions sont fournis dans la doc.
+Il faut remplacer les variables pour aller avec le reste
 
 ### 1.2. Setup du STM32 
 
