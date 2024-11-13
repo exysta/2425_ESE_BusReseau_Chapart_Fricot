@@ -51,9 +51,9 @@ Il faut remplacer les variables pour aller avec le reste de notre code.
 
 Sous STM32CubeIDE, nous avons mis en place une configuration adaptée à notre carte nucleo-F446RE. Pour ce TP, nous aurons besoin des connections suivantes : 
 
-  - Une liaison I²C. (broches PB8 et PB9)
+  - Une liaison I²C. (broches PA8 et PB4)
   - Une UART sur USB (UART2 sur les broches PA2 et PA3)
-  - Une liaison UART indépendante pour la communication avec le Raspberry (TP2)
+  - Une liaison UART indépendante pour la communication avec le Raspberry (TP2) (USART3 : PC10 et PC11)
   - D'une liaison CAN (TP4)
 
 <div align="center">
