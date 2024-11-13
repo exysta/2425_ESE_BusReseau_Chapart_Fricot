@@ -42,7 +42,7 @@
 #define BMP280_ADDR 0x77
 #define MPU9250_ADDR 0x68
 #define BMP280_CALIBRATION_BUFFER_SIZE 25
-#define CAN
+//#define CAN
 #define NO_PROBLEMO 0
 #define YES_PROBLEMO 1
 
@@ -156,7 +156,7 @@ uint32_t bmp280_compensate_P_int64(int32_t adc_P)
 	return (uint32_t)p;
 }
 
-	int GET_T()
+	int GET_T(uint32_t * temp)
 	{
 		//récupération de la température
 		uint8_t temp_start_addr = 0xFA; // l'adresse de départ du registre température
@@ -167,17 +167,19 @@ uint32_t bmp280_compensate_P_int64(int32_t adc_P)
 		for(int i = 0; i <3;i++)
 		{
 
-			HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, &current_temp_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
-			HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &temp_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
+			HAL_OK !=HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, &current_temp_addr, 1, 1000);
+
+			HAL_OK !=HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &temp_value, 1, 1000);
+
 			temp_value_buffer[i] = temp_value; // on la range dans le buffer
 			current_temp_addr++; // on incrémente l'adresse
 		}
 		uint32_t temp_value_32  =	convertBufferToUint32(temp_value_buffer);
 		temp_value_32 = bmp280_compensate_T_int32(temp_value_32);
 		float temp_value_c = temp_value_32 * 0.0025f;
-		uint32_t temp_value_c_scaled = (int)(temp_value_c * 100); //1234 = 12.34 degrés celsius
+		temp = (int)(temp_value_c * 100); //1234 = 12.34 degrés celsius
 
-		printf("Temperature (à divisé par 100 ): %lu \r\n", temp_value_c_scaled);
+		printf("Temperature (à divisé par 100 ): %lu \r\n", temp);
 		return 0;
 	}
 
@@ -298,9 +300,6 @@ uint32_t bmp280_compensate_P_int64(int32_t adc_P)
 		HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &bmp280_id, 1, 1000);
 		//--------------------------------------------------------------------------------------
 
-
-
-
 #endif
 
 		uint8_t uart_transmission_end_flag = 0;
@@ -311,7 +310,7 @@ uint32_t bmp280_compensate_P_int64(int32_t adc_P)
 		bmp280_config();
 		bmp280_etalonnage();
 
-		uint8_t prompt[] = ">>> \r\n";
+		uint8_t prompt[] = ">>> \r";
 #ifdef CAN
 
 		HAL_CAN_Start(&hcan1);
@@ -331,6 +330,7 @@ uint32_t bmp280_compensate_P_int64(int32_t adc_P)
 			printf(prompt);
 			int buffer_index = 0;
 			uart_transmission_end_flag = 0;
+			uint32_t temp;
 
 			while(uart_transmission_end_flag == 0)
 			{
@@ -344,7 +344,7 @@ uint32_t bmp280_compensate_P_int64(int32_t adc_P)
 				{
 					if(strcmp((const char*)receive_buffer,"GET_T") == 0)
 					{
-						if(GET_T() != NO_PROBLEMO)
+						if(GET_T(&temp) != NO_PROBLEMO)
 						{
 							printf("problem while reading temp");
 						}
