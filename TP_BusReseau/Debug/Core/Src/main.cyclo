@@ -1,11 +1,4 @@
-../Core/Src/main.c:74:10:convertBufferToUint32	1
-../Core/Src/main.c:78:5:bmp280_config	2
-../Core/Src/main.c:98:5:bmp280_etalonnage	4
-../Core/Src/main.c:126:9:bmp280_compensate_T_int32	1
-../Core/Src/main.c:138:10:bmp280_compensate_P_int64	2
-../Core/Src/main.c:159:6:GET_T	2
-../Core/Src/main.c:186:6:GET_P	4
-../Core/Src/main.c:248:6:__io_put_char	1
-../Core/Src/main.c:264:6:main	8
-../Core/Src/main.c:375:7:SystemClock_Config	4
-../Core/Src/main.c:432:7:Error_Handler	1
+../Core/Src/main.c:69:5:__io_put_char	1
+../Core/Src/main.c:85:5:main	1
+../Core/Src/main.c:147:6:SystemClock_Config	4
+../Core/Src/main.c:204:6:Error_Handler	1

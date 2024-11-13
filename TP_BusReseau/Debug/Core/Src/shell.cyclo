@@ -1,0 +1,16 @@
+../Core/Src/shell.c:55:5:control_motor	2
+../Core/Src/shell.c:73:5:angle	4
+../Core/Src/shell.c:107:6:CAN_Send_AutomaticMode	3
+../Core/Src/shell.c:135:10:convertBufferToUint32	1
+../Core/Src/shell.c:139:5:bmp280_config	2
+../Core/Src/shell.c:159:5:bmp280_etalonnage	4
+../Core/Src/shell.c:187:9:bmp280_compensate_T_int32	1
+../Core/Src/shell.c:199:10:bmp280_compensate_P_int64	2
+../Core/Src/shell.c:220:5:GET_T	2
+../Core/Src/shell.c:246:6:PRINT_T	1
+../Core/Src/shell.c:253:5:GET_P	4
+../Core/Src/shell.c:283:6:GET_K	1
+../Core/Src/shell.c:288:6:SET_K	1
+../Core/Src/shell.c:293:6:Shell_Init	1
+../Core/Src/shell.c:312:6:Shell_Loop	12
+../Core/Src/shell.c:366:6:HAL_UART_RxCpltCallback	2
