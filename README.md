@@ -69,7 +69,7 @@ Afin de pouvoir plus facilement débuguer notre programme STM32, nous avons fait
 </div>
 
 <div align="center">
-    <img src="./Images/printf.png" width="400">
+    <img src="./Images/printf.png" width="300">
     <p><strong>Figure 3 – Fichier main.c et résultat dans la console </strong></p>
 </div>
 
@@ -181,7 +181,14 @@ On branche le port série du Raspberry en boucle : RX sur TX. On utilise ensuite
 </div>
 
 Lorsque l’on écrit quelques lettres au clavier, elles s’affichent bien, cela montre que le loopback fonctionne.
-Pour la communication avec la stm32, nous avons décidé d’utiliser un shell à détailler !!!!
+#### Communication avec la stm32
+
+| Requête du RPi | Réponse du STM   | Commentaire                                   |
+|----------------|-------------------|----------------------------------------------|
+| GET_T          | T=+12.50_C       | Température compensée sur 10 caractères      |
+| GET_P          | P=102300Pa       | Pression compensée sur 10 caractères         |
+
+Pour la communication avec la stm32, nous avons 
 
 <div align="center">
     <img src="./Images/shell.png" width="400">
@@ -259,10 +266,14 @@ Le fragment <int:index> dans le décorateur @app.route est utilisé pour défini
     <img src="./Images/doc_serveur.png" width="350">
 </div>
 
-Ajouter une description du script python !!!!
 
 
 ## 4. TP4 - Bus CAN
+
+**Objectif**: Développement d'une API Rest et mise en place d'un périphérique sur bus CAN
+
+Nous avons utilisé le bus CAN pour piloter un module moteur pas-à-pas.
+La carte moteur est un peu capricieuse et ne semble tolérer qu'une vitesse CAN de 500kbit/s. Nous avons donc réglé CubeMx en conséquence, à l'aide d'un calculateur: 
 
 <div align="center">
     <img src="./Images/calcul_reglage_CAN.png" width="350">
