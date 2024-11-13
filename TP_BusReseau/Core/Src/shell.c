@@ -364,7 +364,7 @@ void Shell_Loop(void) {
 
 // Callback function to handle UART receive completion
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-	if (huart->Instance == USART2) {  // Ensure the callback is for the correct UART instance
+	if (huart->Instance == USART3) {  // Ensure the callback is for the correct UART instance
 		uartRxReceived = 1;  // Set the flag to indicate data is ready to be processed
 		// Restart the UART receive interrupt
 		HAL_UART_Receive_IT(&huart3, uartRxBuffer, 1);  // Read 1 byte at a time

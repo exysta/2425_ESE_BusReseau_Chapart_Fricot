@@ -2086,7 +2086,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
  800103e:	b082      	sub	sp, #8
  8001040:	af00      	add	r7, sp, #0
  8001042:	6078      	str	r0, [r7, #4]
-	if (huart->Instance == USART2) {  // Ensure the callback is for the correct UART instance
+	if (huart->Instance == USART3) {  // Ensure the callback is for the correct UART instance
  8001044:	687b      	ldr	r3, [r7, #4]
  8001046:	681b      	ldr	r3, [r3, #0]
  8001048:	4a07      	ldr	r2, [pc, #28]	@ (8001068 <HAL_UART_RxCpltCallback+0x2c>)
@@ -2109,7 +2109,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
  8001062:	46bd      	mov	sp, r7
  8001064:	bd80      	pop	{r7, pc}
  8001066:	bf00      	nop
- 8001068:	40004400 	.word	0x40004400
+ 8001068:	40004800 	.word	0x40004800
  800106c:	200001b0 	.word	0x200001b0
  8001070:	200001b4 	.word	0x200001b4
  8001074:	200002e0 	.word	0x200002e0
