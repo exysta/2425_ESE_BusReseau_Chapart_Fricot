@@ -282,3 +282,10 @@ La carte moteur est un peu capricieuse et ne semble tolérer qu'une vitesse CAN 
 <div align="center">
     <img src="./Images/reglage_CAN.png" width="350">
 </div>
+
+### 4.1. Pilotage du moteur
+
+Pour faire bouger le moteur de 90° dans un sens, puis de 90° dans l'autre, nous avons envoyé le message suivant :
+<div align="center">
+    <img src="./Images/param_can.png" width="350">
+</div>
