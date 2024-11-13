@@ -311,6 +311,37 @@ Concernant l'API REST sur le Raspberry, nous avons mis à jour le code Flask ave
 
 ## 6. Liste de nos fonctions
 
-Nous avons décidé de d'écrire nos fonctions dans le fichier shell.c pour les appelers dans le main.c par la suite 
-- **int** control_motor()
-- **int** angle 
+Les fonctions suivantes sont dans le fichier shell.c :
+
+- int control_motor() : Contrôle l'angle du moteur en fonction de la température mesurée par le capteur.
+
+- int angle(char **argv, int argc) : Définit l'angle du moteur en fonction du paramètre fourni.
+
+- void CAN_Send_AutomaticMode(uint8_t angle, uint8_t sign) : Envoie une trame CAN pour configurer l'angle en mode automatique.
+
+- uint32_t convertBufferToUint32(uint8_t buffer[3]) : Convertit un tableau de 3 octets en un entier 32 bits.
+
+- int bmp280_config() : Configure le capteur BMP280 pour la mesure de température et de pression.
+
+- int bmp280_etalonnage() : Récupère les données d'étalonnage du capteur BMP280.
+
+- int32_t bmp280_compensate_T_int32(int32_t adc_T) : Compense la mesure brute de température pour obtenir la température en °C.
+
+- uint32_t bmp280_compensate_P_int64(int32_t adc_P) : Compense la mesure brute de pression pour obtenir la pression en Pa.
+
+- int GET_T(uint32_t *temp) : Récupère la température depuis le capteur BMP280.
+
+- void PRINT_T() : Affiche la température mesurée sur le terminal.
+
+- int GET_P() : Récupère la pression depuis le capteur BMP280.
+
+- void GET_K() : Affiche le coefficient du moteur.
+
+- void SET_K() : Prévue pour définir le coefficient du moteur.
+
+- void Shell_Init() : Initialise l'environnement du shell, les capteurs, et démarre la communication CAN et UART.
+
+- void Shell_Loop() : Boucle principale du shell, gère les commandes entrées par l'utilisateur.
+
+
+
