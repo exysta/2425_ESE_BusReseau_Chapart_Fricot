@@ -12,8 +12,11 @@
    - [Mise en route du Raspberry Pi Zéro](#mise-en-route-du-raspberry-pi-zéro)
    - [Port Série](#port-série)
 3. [TP3 - Interface REST](#tp3---interface-rest)
-4. [Installation du Serveur Python](#installation-du-serveur-python)
+   - [Installation du Serveur Python](#installation-du-serveur-python)
    - [Première Page REST](#première-page-rest)
+4. [TP4 - Bus CAN](#tp4---bus-can)
+5. [TP5 - Intégration I²C - Serial - REST - CAN](#tp5---integration-i2c---serial---rest---can)
+6. [Listes de nos fonctions](#liste-de-nos-fonctions)
 
 
 ## TP 1 - Bus I²C
@@ -283,6 +286,31 @@ La carte moteur est un peu capricieuse et ne semble tolérer qu'une vitesse CAN 
 ### 4.1. Pilotage du moteur
 
 Pour faire bouger le moteur de 90° dans un sens, puis de 90° dans l'autre, nous avons envoyé le message suivant :
+
 <div align="center">
     <img src="./Images/param_can.png" width="350">
 </div>
+
+## 5. TP5 - Intégration I²C - Serial - REST - CAN
+
+Concernant l'API REST sur le Raspberry, nous avons mis à jour le code Flask avec les nouvelles fonctionnalités CRUD dans le fichier slowServer2.py :
+
+| CRUD      | Method | Path         | Action                                  |
+|-----------|--------|--------------|-----------------------------------------|
+| Create    | POST   | temp/        | Retrieve new temperature                |
+| Create    | POST   | pres/        | Retrieve new pressure                   |
+| Retrieve  | GET    | temp/        | Return all previous temperatures        |
+| Retrieve  | GET    | temp/x       | Return temperature #x                   |
+| Retrieve  | GET    | pres/        | Return all previous pressures           |
+| Retrieve  | GET    | pres/x       | Return pressure #x                      |
+| Retrieve  | GET    | scale/       | Return scale (K)                        |
+| Retrieve  | GET    | angle/       | Return angle (temp × scale)             |
+| Update    | POST   | scale/x      | Change scale (K) for x                  |
+| Delete    | DELETE | temp/x       | Delete temperature #x                   |
+| Delete    | DELETE | pres/x       | Delete pressure #x                      |
+
+## 6. Liste de nos fonctions
+
+Nous avons décidé de d'écrire nos fonctions dans le fichier shell.c pour les appelers dans le main.c par la suite 
+- **int** control_motor()
+- **int** angle 
