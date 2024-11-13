@@ -187,12 +187,9 @@ Lorsque l’on écrit quelques lettres au clavier, elles s’affichent bien, cel
 |----------------|-------------------|----------------------------------------------|
 | GET_T          | T=+12.50_C       | Température compensée sur 10 caractères      |
 | GET_P          | P=102300Pa       | Pression compensée sur 10 caractères         |
+| SET_K=1234     | SET_K=OK          | Fixe le coefficient de proportionnalité K entre l'angle du moteur et P ou T          |
+| GET_K          | K=12.34000        | Coefficient K sur 10 caractères             |
 
-Pour la communication avec la stm32, nous avons 
-
-<div align="center">
-    <img src="./Images/shell.png" width="400">
-</div>
 
 ## 3. TP3 - Interface REST
 
