@@ -65,12 +65,12 @@ int control_motor()
 	{
 		sens = 1;
 	}
-	uint32_t angle = abs(new_temp) * motor_coeff;
-	CAN_Send_AutomaticMode(angle,sens);
+	uint32_t motor_angle = abs(new_temp) * motor_coeff;
+	CAN_Send_AutomaticMode(motor_angle,sens);
 }
 
 
-int angle(char **argv,int argc)
+int set_angle(char **argv,int argc)
 {
 	int angle = atoi(argv[1]);//speed in expected in % of max speed
 	if(argc != 2)
@@ -349,7 +349,7 @@ void Shell_Loop(void) {
 			int uartTxStringLength = snprintf((char *)uartTxBuffer, UART_TX_BUFFER_SIZE, "Print all available functions here\r\n");
 			HAL_UART_Transmit(&huart2, uartTxBuffer, uartTxStringLength, HAL_MAX_DELAY);
 		} else if (strcmp(argv[0], "angle") == 0) {
-			angle(argv, argc);
+			set_angle(argv, argc);
 		}
 		else if (strcmp(argv[0], "GET_T") == 0) {
 			PRINT_T(&temp);

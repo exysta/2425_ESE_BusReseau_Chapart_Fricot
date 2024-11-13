@@ -60,8 +60,8 @@ all: main-build
 main-build: TP_BusReseau.elf secondary-outputs
 
 # Tool invocations
-TP_BusReseau.elf TP_BusReseau.map: $(OBJS) $(USER_OBJS) C:\Users\charl\Documents\2425_ESE_BusReseau_Chapart_Fricot\TP_BusReseau\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "TP_BusReseau.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\charl\Documents\2425_ESE_BusReseau_Chapart_Fricot\TP_BusReseau\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TP_BusReseau.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+TP_BusReseau.elf TP_BusReseau.map: $(OBJS) $(USER_OBJS) /home/exysta/ensea/bus_reseau/TP/TP_BusReseau/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "TP_BusReseau.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/exysta/ensea/bus_reseau/TP/TP_BusReseau/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TP_BusReseau.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

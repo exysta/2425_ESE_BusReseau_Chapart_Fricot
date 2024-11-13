@@ -67,31 +67,6 @@ void SystemClock_Config(void);
 
 
 
-int GET_P(h_shell_t * h_shell,int argc, char ** argv)
-{
-	//récupération de la pression
-	uint8_t pressure_start_addr = 0xF7; // l'adresse de départ du registre pression
-	uint8_t pressure_value_buffer[3]; //chaque adresse sera stocké dans un byte puis on combinera les bytes
-	uint8_t current_pressure_addr = pressure_start_addr;
-	uint8_t pressure_value; //chaque adresse sera stocké dans un byte puis on combinera les bytes
-
-	for(int i = 0; i <3;i++)
-	{
-
-		HAL_I2C_Master_Transmit(&hi2c1, bmp280_addr_shifted, &current_pressure_addr, 1, 1000); // on demande à récup valeur de l'adresse courante
-		HAL_I2C_Master_Receive(&hi2c1, bmp280_addr_shifted, &pressure_value, 1, 1000); // on récupère la valeur de calibration de l'adresse courante
-		pressure_value_buffer[i] = pressure_value; // on la range dans le buffer
-		current_pressure_addr++; // on incrémente l'adresse
-	}
-	//HAL_I2C_Mem_Read(hi2c, DevAddress, MemAddress, MemAddSize, pData, Size, Timeout)
-	uint32_t pressure_value_32 = convertBufferToUint32(pressure_value_buffer);
-
-
-	printf("pression non compensée %lu \r\n",pressure_value_32);
-	return 0;
-}
-
-
 
 /* USER CODE END 0 */
 
@@ -143,10 +118,10 @@ int main(void)
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
-//				CAN_Send_AutomaticMode(0x54,0x01);
-//				HAL_Delay(1000);
-//				CAN_Send_AutomaticMode(0x54,0x00);
-//				HAL_Delay(1000);
+		//				CAN_Send_AutomaticMode(0x54,0x01);
+		//				HAL_Delay(1000);
+		//				CAN_Send_AutomaticMode(0x54,0x00);
+		//				HAL_Delay(1000);
 		Shell_Loop();
 		control_motor();
 

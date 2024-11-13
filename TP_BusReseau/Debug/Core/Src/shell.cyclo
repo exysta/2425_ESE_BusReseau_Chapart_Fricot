@@ -1,5 +1,5 @@
 ../Core/Src/shell.c:55:5:control_motor	2
-../Core/Src/shell.c:73:5:angle	4
+../Core/Src/shell.c:73:5:set_angle	4
 ../Core/Src/shell.c:107:6:CAN_Send_AutomaticMode	3
 ../Core/Src/shell.c:135:10:convertBufferToUint32	1
 ../Core/Src/shell.c:139:5:bmp280_config	2

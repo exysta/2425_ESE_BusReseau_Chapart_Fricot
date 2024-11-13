@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00008118  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000101a3  00000000  00000000  00008148  2**0
+ 12 .debug_info   0000fc6e  00000000  00000000  00008148  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00002c2d  00000000  00000000  000182eb  2**0
+ 13 .debug_abbrev 00002bdb  00000000  00000000  00017db6  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000d80  00000000  00000000  0001af18  2**3
+ 14 .debug_aranges 00000d78  00000000  00000000  0001a998  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000a64  00000000  00000000  0001bc98  2**0
+ 15 .debug_rnglists 00000a5e  00000000  00000000  0001b710  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00023996  00000000  00000000  0001c6fc  2**0
+ 16 .debug_macro  00023996  00000000  00000000  0001c16e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0001238e  00000000  00000000  00040092  2**0
+ 17 .debug_line   00012372  00000000  00000000  0003fb04  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000d045b  00000000  00000000  00052420  2**0
+ 18 .debug_str    000d0463  00000000  00000000  00051e76  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  0012287b  2**0
+ 19 .comment      00000043  00000000  00000000  001222d9  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00004318  00000000  00000000  001228c0  2**2
+ 20 .debug_frame  000042f4  00000000  00000000  0012231c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000005c  00000000  00000000  00126bd8  2**0
+ 21 .debug_line_str 0000005c  00000000  00000000  00126610  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -969,10 +969,10 @@ int main(void)
 	Shell_Init();
  80008f4:	f000 fa8a 	bl	8000e0c <Shell_Init>
 	{
-//				CAN_Send_AutomaticMode(0x54,0x01);
-//				HAL_Delay(1000);
-//				CAN_Send_AutomaticMode(0x54,0x00);
-//				HAL_Delay(1000);
+		//				CAN_Send_AutomaticMode(0x54,0x01);
+		//				HAL_Delay(1000);
+		//				CAN_Send_AutomaticMode(0x54,0x00);
+		//				HAL_Delay(1000);
 		Shell_Loop();
  80008f8:	f000 fad6 	bl	8000ea8 <Shell_Loop>
 		control_motor();
@@ -1188,7 +1188,7 @@ int control_motor()
  8000a14:	2301      	movs	r3, #1
  8000a16:	73fb      	strb	r3, [r7, #15]
 	}
-	uint32_t angle = abs(new_temp) * motor_coeff;
+	uint32_t motor_angle = abs(new_temp) * motor_coeff;
  8000a18:	68bb      	ldr	r3, [r7, #8]
  8000a1a:	2b00      	cmp	r3, #0
  8000a1c:	bfb8      	it	lt
@@ -1197,7 +1197,7 @@ int control_motor()
  8000a22:	7812      	ldrb	r2, [r2, #0]
  8000a24:	fb02 f303 	mul.w	r3, r2, r3
  8000a28:	607b      	str	r3, [r7, #4]
-	CAN_Send_AutomaticMode(angle,sens);
+	CAN_Send_AutomaticMode(motor_angle,sens);
  8000a2a:	7bfb      	ldrb	r3, [r7, #15]
  8000a2c:	4619      	mov	r1, r3
  8000a2e:	6878      	ldr	r0, [r7, #4]
@@ -1212,10 +1212,10 @@ int control_motor()
  8000a40:	20000214 	.word	0x20000214
  8000a44:	2000021c 	.word	0x2000021c
 
-08000a48 <angle>:
+08000a48 <set_angle>:
 
 
-int angle(char **argv,int argc)
+int set_angle(char **argv,int argc)
 {
  8000a48:	b5b0      	push	{r4, r5, r7, lr}
  8000a4a:	b094      	sub	sp, #80	@ 0x50
@@ -1232,10 +1232,10 @@ int angle(char **argv,int argc)
 	if(argc != 2)
  8000a60:	683b      	ldr	r3, [r7, #0]
  8000a62:	2b02      	cmp	r3, #2
- 8000a64:	d018      	beq.n	8000a98 <angle+0x50>
+ 8000a64:	d018      	beq.n	8000a98 <set_angle+0x50>
 	{
 		uint8_t error_message[] = "Error : angle function expect exactly 1 parameter \r\n";
- 8000a66:	4b2b      	ldr	r3, [pc, #172]	@ (8000b14 <angle+0xcc>)
+ 8000a66:	4b2b      	ldr	r3, [pc, #172]	@ (8000b14 <set_angle+0xcc>)
  8000a68:	f107 0408 	add.w	r4, r7, #8
  8000a6c:	461d      	mov	r5, r3
  8000a6e:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
@@ -1252,20 +1252,20 @@ int angle(char **argv,int argc)
  8000a84:	f107 0108 	add.w	r1, r7, #8
  8000a88:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
  8000a8c:	2235      	movs	r2, #53	@ 0x35
- 8000a8e:	4822      	ldr	r0, [pc, #136]	@ (8000b18 <angle+0xd0>)
+ 8000a8e:	4822      	ldr	r0, [pc, #136]	@ (8000b18 <set_angle+0xd0>)
  8000a90:	f003 f9ca 	bl	8003e28 <HAL_UART_Transmit>
 		return 1;
  8000a94:	2301      	movs	r3, #1
- 8000a96:	e038      	b.n	8000b0a <angle+0xc2>
+ 8000a96:	e038      	b.n	8000b0a <set_angle+0xc2>
 	}
 
 	else if(angle > 180)//on vérifie qu'on met pas l'angle au dessus du max
  8000a98:	6c7b      	ldr	r3, [r7, #68]	@ 0x44
  8000a9a:	2bb4      	cmp	r3, #180	@ 0xb4
- 8000a9c:	dd17      	ble.n	8000ace <angle+0x86>
+ 8000a9c:	dd17      	ble.n	8000ace <set_angle+0x86>
 	{
 		uint8_t error_message[] = "angle function must not exceed 180  \r\n";
- 8000a9e:	4b1f      	ldr	r3, [pc, #124]	@ (8000b1c <angle+0xd4>)
+ 8000a9e:	4b1f      	ldr	r3, [pc, #124]	@ (8000b1c <set_angle+0xd4>)
  8000aa0:	f107 0408 	add.w	r4, r7, #8
  8000aa4:	461d      	mov	r5, r3
  8000aa6:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
@@ -1283,7 +1283,7 @@ int angle(char **argv,int argc)
  8000abe:	f107 0108 	add.w	r1, r7, #8
  8000ac2:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
  8000ac6:	2227      	movs	r2, #39	@ 0x27
- 8000ac8:	4813      	ldr	r0, [pc, #76]	@ (8000b18 <angle+0xd0>)
+ 8000ac8:	4813      	ldr	r0, [pc, #76]	@ (8000b18 <set_angle+0xd0>)
  8000aca:	f003 f9ad 	bl	8003e28 <HAL_UART_Transmit>
 	}
 	uint32_t real_angle;
@@ -1291,7 +1291,7 @@ int angle(char **argv,int argc)
 	if(angle <0)
  8000ace:	6c7b      	ldr	r3, [r7, #68]	@ 0x44
  8000ad0:	2b00      	cmp	r3, #0
- 8000ad2:	da06      	bge.n	8000ae2 <angle+0x9a>
+ 8000ad2:	da06      	bge.n	8000ae2 <set_angle+0x9a>
 	{
 		real_angle = -angle;
  8000ad4:	6c7b      	ldr	r3, [r7, #68]	@ 0x44
@@ -1300,7 +1300,7 @@ int angle(char **argv,int argc)
 		sens = NEGATIVE_ROTATION;
  8000ada:	2301      	movs	r3, #1
  8000adc:	f887 304b 	strb.w	r3, [r7, #75]	@ 0x4b
- 8000ae0:	e004      	b.n	8000aec <angle+0xa4>
+ 8000ae0:	e004      	b.n	8000aec <set_angle+0xa4>
 	}
 	else
 	{
@@ -1317,14 +1317,14 @@ int angle(char **argv,int argc)
  8000af2:	6cf8      	ldr	r0, [r7, #76]	@ 0x4c
  8000af4:	f000 f816 	bl	8000b24 <CAN_Send_AutomaticMode>
 	uint8_t * success_message = "angle set to %lu \r\n";
- 8000af8:	4b09      	ldr	r3, [pc, #36]	@ (8000b20 <angle+0xd8>)
+ 8000af8:	4b09      	ldr	r3, [pc, #36]	@ (8000b20 <set_angle+0xd8>)
  8000afa:	643b      	str	r3, [r7, #64]	@ 0x40
 	//snprintf((char *)success_message, sizeof(success_message), "speed set to %lu of max value \r\n", (unsigned long)speed);
 	HAL_UART_Transmit(&huart2, success_message, sizeof(success_message), HAL_MAX_DELAY);
  8000afc:	f04f 33ff 	mov.w	r3, #4294967295	@ 0xffffffff
  8000b00:	2204      	movs	r2, #4
  8000b02:	6c39      	ldr	r1, [r7, #64]	@ 0x40
- 8000b04:	4804      	ldr	r0, [pc, #16]	@ (8000b18 <angle+0xd0>)
+ 8000b04:	4804      	ldr	r0, [pc, #16]	@ (8000b18 <set_angle+0xd0>)
  8000b06:	f003 f98f 	bl	8003e28 <HAL_UART_Transmit>
 
 }
@@ -2072,12 +2072,12 @@ void Shell_Loop(void) {
  8000ff0:	4603      	mov	r3, r0
  8000ff2:	2b00      	cmp	r3, #0
  8000ff4:	d106      	bne.n	8001004 <Shell_Loop+0x15c>
-			angle(argv, argc);
+			set_angle(argv, argc);
  8000ff6:	4b1a      	ldr	r3, [pc, #104]	@ (8001060 <Shell_Loop+0x1b8>)
  8000ff8:	681b      	ldr	r3, [r3, #0]
  8000ffa:	4619      	mov	r1, r3
  8000ffc:	481b      	ldr	r0, [pc, #108]	@ (800106c <Shell_Loop+0x1c4>)
- 8000ffe:	f7ff fd23 	bl	8000a48 <angle>
+ 8000ffe:	f7ff fd23 	bl	8000a48 <set_angle>
  8001002:	e013      	b.n	800102c <Shell_Loop+0x184>
 		}
 		else if (strcmp(argv[0], "GET_T") == 0) {
@@ -2508,7 +2508,7 @@ void _exit (int status)
 0800120a <_read>:
 }
 
-int _getpid(void)
+__attribute__((weak)) int _read(int file, char *ptr, int len)
 {
  800120a:	b580      	push	{r7, lr}
  800120c:	b086      	sub	sp, #24
