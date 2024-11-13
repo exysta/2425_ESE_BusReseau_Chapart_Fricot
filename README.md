@@ -313,9 +313,9 @@ Concernant l'API REST sur le Raspberry, nous avons mis à jour le code Flask ave
 
 Les fonctions suivantes sont dans le fichier shell.c :
 
-- int control_motor() : Contrôle l'angle du moteur en fonction de la température mesurée par le capteur.
+- void control_motor() : Contrôle l'angle du moteur en fonction de la température mesurée par le capteur.
 
-- int angle(char **argv, int argc) : Définit l'angle du moteur en fonction du paramètre fourni.
+- void angle(char **argv, int argc) : Définit l'angle du moteur en fonction du paramètre fourni.
 
 - void CAN_Send_AutomaticMode(uint8_t angle, uint8_t sign) : Envoie une trame CAN pour configurer l'angle en mode automatique.
 
