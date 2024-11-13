@@ -17,7 +17,7 @@ HeaderFiles#4=../Core/Inc/stm32f4xx_it.h
 HeaderFiles#5=../Core/Inc/stm32f4xx_hal_conf.h
 HeaderFiles#6=../Core/Inc/main.h
 HeaderFolderListSize=1
-HeaderPath#0=..\Core\Inc
+HeaderPath#0=../Core/Inc
 HeaderFiles=;
 SourceFileListSize=7
 SourceFiles#0=../Core/Src/gpio.c
@@ -28,6 +28,6 @@ SourceFiles#4=../Core/Src/stm32f4xx_it.c
 SourceFiles#5=../Core/Src/stm32f4xx_hal_msp.c
 SourceFiles#6=../Core/Src/main.c
 SourceFolderListSize=1
-SourcePath#0=..\Core\Src
+SourcePath#0=../Core/Src
 SourceFiles=;
 

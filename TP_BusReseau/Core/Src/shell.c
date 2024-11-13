@@ -76,14 +76,14 @@ int set_angle(char **argv,int argc)
 	if(argc != 2)
 	{
 		uint8_t error_message[] = "Error : angle function expect exactly 1 parameter \r\n";
-		HAL_UART_Transmit(&huart2, error_message, sizeof(error_message), HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart3, error_message, sizeof(error_message), HAL_MAX_DELAY);
 		return 1;
 	}
 
 	else if(angle > 180)//on vérifie qu'on met pas l'angle au dessus du max
 	{
 		uint8_t error_message[] = "angle function must not exceed 180  \r\n";
-		HAL_UART_Transmit(&huart2, error_message, sizeof(error_message), HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart3, error_message, sizeof(error_message), HAL_MAX_DELAY);
 	}
 	uint32_t real_angle;
 	uint8_t sens;
@@ -100,7 +100,7 @@ int set_angle(char **argv,int argc)
 	CAN_Send_AutomaticMode(real_angle,sens);
 	uint8_t * success_message = "angle set to %lu \r\n";
 	//snprintf((char *)success_message, sizeof(success_message), "speed set to %lu of max value \r\n", (unsigned long)speed);
-	HAL_UART_Transmit(&huart2, success_message, sizeof(success_message), HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart3, success_message, sizeof(success_message), HAL_MAX_DELAY);
 
 }
 
@@ -228,9 +228,9 @@ int GET_T(uint32_t * temp)
 	for(int i = 0; i <3;i++)
 	{
 
-		HAL_StatusTypeDef test1=HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, &current_temp_addr, 1, 1000);
+		HAL_I2C_Master_Transmit(&hi2c3, bmp280_addr_shifted, &current_temp_addr, 1, 1000);
 
-		HAL_StatusTypeDef test2=HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &temp_value, 1, 1000);
+		HAL_I2C_Master_Receive(&hi2c3, bmp280_addr_shifted, &temp_value, 1, 1000);
 
 		temp_value_buffer[i] = temp_value; // on la range dans le buffer
 		current_temp_addr++; // on incrémente l'adresse
@@ -301,9 +301,9 @@ void Shell_Init(void){
 	HAL_CAN_Start(&hcan1);
 	motor_coeff = 1;
 
-	HAL_UART_Transmit(&huart2, started, strlen((char *)started), HAL_MAX_DELAY);
-	HAL_UART_Transmit(&huart2, prompt, strlen((char *)prompt), HAL_MAX_DELAY);
-	HAL_UART_Receive_IT(&huart2, uartRxBuffer, UART_RX_BUFFER_SIZE);
+	HAL_UART_Transmit(&huart3, started, strlen((char *)started), HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart3, prompt, strlen((char *)prompt), HAL_MAX_DELAY);
+	HAL_UART_Receive_IT(&huart3, uartRxBuffer, UART_RX_BUFFER_SIZE);
 
 }
 
@@ -313,7 +313,7 @@ void Shell_Loop(void) {
 	if (uartRxReceived) {  // Check if UART data was received
 		switch (uartRxBuffer[0]) {
 		case ASCII_CR:  // Newline character, process the command
-			HAL_UART_Transmit(&huart2, newline, sizeof(newline), HAL_MAX_DELAY);
+			HAL_UART_Transmit(&huart3, newline, sizeof(newline), HAL_MAX_DELAY);
 			cmdBuffer[idx_cmd] = '\0';
 			argc = 0;
 			token = strtok(cmdBuffer, " ");
@@ -328,14 +328,14 @@ void Shell_Loop(void) {
 		case ASCII_BACK:  // Backspace, delete last character
 			if (idx_cmd > 0) {  // Ensure we don't go below 0
 				cmdBuffer[--idx_cmd] = '\0';
-				HAL_UART_Transmit(&huart2, backspace, sizeof(backspace), HAL_MAX_DELAY);
+				HAL_UART_Transmit(&huart3, backspace, sizeof(backspace), HAL_MAX_DELAY);
 			}
 			break;
 
 		default:  // Add new character to command buffer
 			if (idx_cmd < sizeof(cmdBuffer) - 1) {  // Avoid overflow
 				cmdBuffer[idx_cmd++] = uartRxBuffer[0];
-				HAL_UART_Transmit(&huart2, uartRxBuffer, 1, HAL_MAX_DELAY);
+				HAL_UART_Transmit(&huart3, uartRxBuffer, 1, HAL_MAX_DELAY);
 			}
 			break;
 		}
@@ -344,10 +344,10 @@ void Shell_Loop(void) {
 
 	if (newCmdReady) {
 		if (strcmp(argv[0], "WhereisBrian?") == 0) {
-			HAL_UART_Transmit(&huart2, brian, sizeof(brian), HAL_MAX_DELAY);
+			HAL_UART_Transmit(&huart3, brian, sizeof(brian), HAL_MAX_DELAY);
 		} else if (strcmp(argv[0], "help") == 0) {
 			int uartTxStringLength = snprintf((char *)uartTxBuffer, UART_TX_BUFFER_SIZE, "Print all available functions here\r\n");
-			HAL_UART_Transmit(&huart2, uartTxBuffer, uartTxStringLength, HAL_MAX_DELAY);
+			HAL_UART_Transmit(&huart3, uartTxBuffer, uartTxStringLength, HAL_MAX_DELAY);
 		} else if (strcmp(argv[0], "angle") == 0) {
 			set_angle(argv, argc);
 		}
@@ -355,9 +355,9 @@ void Shell_Loop(void) {
 			PRINT_T(&temp);
 		}
 		else {
-			HAL_UART_Transmit(&huart2, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
+			HAL_UART_Transmit(&huart3, cmdNotFound, sizeof(cmdNotFound), HAL_MAX_DELAY);
 		}
-		HAL_UART_Transmit(&huart2, prompt, sizeof(prompt), HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart3, prompt, sizeof(prompt), HAL_MAX_DELAY);
 		newCmdReady = 0;
 	}
 }
@@ -367,6 +367,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart->Instance == USART2) {  // Ensure the callback is for the correct UART instance
 		uartRxReceived = 1;  // Set the flag to indicate data is ready to be processed
 		// Restart the UART receive interrupt
-		HAL_UART_Receive_IT(&huart2, uartRxBuffer, 1);  // Read 1 byte at a time
+		HAL_UART_Receive_IT(&huart3, uartRxBuffer, 1);  // Read 1 byte at a time
 	}
 }
